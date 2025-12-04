@@ -1,0 +1,456 @@
+/* ===========================
+   PAGINA DE CANCIONES
+   =========================== */
+
+.songs-page {
+    min-height: 100vh;
+    background-color: #1b1b1b;
+    padding: 30px;
+    color: white;
+}
+
+/* Encabezado */
+.songs-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.songs-header h1 {
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+.songs-header p {
+    font-size: 1.1rem;
+    opacity: 0.7;
+}
+
+.btn-create-song {
+    margin-top: 15px;
+    background-color: #7d4eff;
+    padding: 10px 16px;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-create-song:hover {
+    background-color: #6238e0;
+}
+
+/* Grid */
+.songs-grid {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 x 2 EXACTO */
+    gap: 25px;
+}
+
+/* ===========================
+   SONG CARD
+   =========================== */
+
+.song-card {
+    background-color: #0f0f0f;
+    padding: 20px;
+    border-radius: 18px;
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    box-shadow: 0px 0px 10px #00000055;
+}
+
+/* Imagen circular */
+.song-image img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #7d4eff;
+}
+
+/* Info */
+.song-info {
+    flex: 1;
+}
+
+.song-title {
+    font-size: 1.2rem;
+    margin-bottom: 3px;
+}
+
+.song-artist {
+    opacity: 0.7;
+    margin-bottom: 3px;
+}
+
+.song-album {
+    opacity: 0.6;
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+}
+
+.song-genre {
+    opacity: 0.6;
+    font-size: 0.85rem;
+}
+
+/* ===========================
+   BOTONES
+   =========================== */
+
+.song-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-add {
+    background-color: #7d4eff;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    transition: .2s;
+}
+
+.btn-add:hover {
+    background-color: #6238e0;
+}
+
+/* ADMIN */
+.admin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.btn-edit {
+    background-color: #3b3b3b;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: none;
+    color: #b88cff;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-edit:hover {
+    background-color: #2d2d2d;
+}
+
+.btn-delete {
+    background-color: #3b3b3b;
+    padding: 6px;
+    border-radius: 6px;
+    border: none;
+    color: #ff6b6b;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-delete:hover {
+    background-color: #2d2d2d;
+}
+
+.playlists-page {
+    padding: 30px;
+    color: white;
+}
+
+.playlists-grid {
+    margin-top: 35px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.playlist-card {
+    background: #121317;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    transition: 0.2s ease;
+}
+
+.playlist-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(106, 13, 173, 0.4);
+}
+
+.playlist-content {
+    color: white;
+    text-decoration: none;
+}
+
+.playlist-icon-circle {
+    width: 80px;
+    height: 80px;
+    margin: auto;
+    margin-bottom: 15px;
+    border-radius: 50%;
+    background: #6a0dad33;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+}
+
+.playlist-title {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.playlist-count {
+    text-align: center;
+    color: #b8b8b8;
+}
+
+.playlist-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.btn-edit {
+    background: #6a0dad;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+    transition: 0.2s;
+}
+
+.btn-edit:hover {
+    background: #8c2aff;
+}
+
+.btn-delete {
+    background: #b71010;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #e01c1c;
+}
+
+
+/* ===========================
+   CONTENEDOR GENERAL
+   =========================== */
+
+.page-container {
+    padding: 30px;
+    color: white;
+    min-height: 100vh;
+    background-color: #1b1b1b;
+}
+
+/* ===========================
+   TARJETAS / SECCIONES
+   =========================== */
+
+.section-card {
+    background: #121317;
+    padding: 25px;
+    border-radius: 14px;
+    margin-bottom: 25px;
+    box-shadow: 0 0 15px #00000055;
+}
+
+/* ===========================
+   BOTONES GENERALES
+   =========================== */
+
+.btn-primary {
+    background: #7d4eff;
+    padding: 10px 16px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: #6238e0;
+}
+
+.btn-secondary {
+    background: #3b3b3b;
+    padding: 10px 16px;
+    border-radius: 8px;
+    color: #b88cff;
+    border: 1px solid #7d4eff33;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #2a2a2a;
+}
+
+.btn-danger {
+    background: #b71010;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-danger:hover {
+    background: #e01c1c;
+}
+
+/* ===========================
+   REGRESAR
+   =========================== */
+
+.back-link {
+    color: #b88cff;
+    display: inline-block;
+    margin-top: 10px;
+    text-decoration: none;
+    transition: .2s;
+}
+
+.back-link:hover {
+    color: #e0c4ff;
+}
+
+/* ===========================
+   ENCABEZADO DE PLAYLIST
+   =========================== */
+
+.playlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.playlist-info h1,
+.playlist-title {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.admin-badge {
+    background: #6a0dad;
+    padding: 4px 10px;
+    margin-left: 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.playlist-genre {
+    opacity: 0.8;
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.playlist-details {
+    opacity: 0.7;
+    font-size: 0.95rem;
+}
+
+.playlist-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ===========================
+   CANCIONES EN PLAYLIST
+   =========================== */
+
+.song-wrapper {
+    position: relative;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.section-header h2 {
+    font-size: 1.4rem;
+}
+
+.count {
+    background: #7d4eff;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+/* ===========================
+   ESTADOS
+   =========================== */
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    font-size: 1.2rem;
+}
+
+.error-box {
+    background: #2a0000;
+    padding: 20px;
+    border-left: 5px solid #ff4d4d;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    opacity: 0.8;
+}
+
+/* ===========================
+   MODAL (EDIT PLAYLIST)
+   =========================== */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: #0009;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background: #121317;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 0 20px #000000aa;
+    animation: fadeIn .3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}

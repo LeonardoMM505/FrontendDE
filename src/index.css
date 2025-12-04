@@ -22,11 +22,19 @@ a:hover {
   color: #535bf2;
 }
 
+/* CORREGIDO: Elimina flex y centrado del body */
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  padding: 0;
   min-width: 320px;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #242424;
+}
+
+/* Asegura que el contenedor raíz ocupe todo el espacio */
+#root {
+  width: 100%;
   min-height: 100vh;
 }
 
@@ -64,5 +72,26 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .animate-fadeIn {
+    animation: fadeIn 0.18s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0px);
+    }
   }
 }

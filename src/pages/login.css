@@ -1,0 +1,169 @@
+/* Fondo general */
+.login-bg {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #4d4d4d;
+}
+
+/* Tarjeta principal */
+.login-card {
+    width: 320px;
+    background: #c8b8f8;
+    border-radius: 28px;
+    padding: 40px 30px;
+    border: 2px solid #9A84D8;
+
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.07),
+        rgba(255,255,255,0.07) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+
+    display: flex;
+    justify-content: center;
+}
+
+/* Formulario */
+.login-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+}
+
+/* Labels */
+.login-label {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    color: #303030;
+}
+
+/* Inputs */
+.login-input {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 16px;
+    color: white;
+
+    background: #3f3f3f;
+    border: none;
+    border-radius: 8px;
+}
+
+.error {
+    color: #ff5555;
+    font-size: 14px;
+    text-align: center;
+}
+
+.login-bg {
+    position: fixed;      /* <-- ocupa la pantalla completa */
+    inset: 0;             /* <-- top:0; left:0; bottom:0; right:0 */
+    width: 100vw;         /* ancho total */
+    height: 100vh;        /* alto total */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background: #4d4d4d;
+}
+
+
+.login-btn:hover {
+    background: #6244e8;
+}
+
+.login-btn:active {
+    transform: scale(0.96);
+}
+
+/* BOTÓN REGISTRO */
+.register-btn {
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: #7558f8;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+.register-btn:hover {
+    background: #6244e8;
+}
+
+.register-btn:active {
+    transform: scale(0.96);
+}
+
+/* Estilos para mensajes de error del servidor */
+.server-error {
+    background: #ffebee;
+    color: #c62828;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border-left: 4px solid #c62828;
+    margin-bottom: 20px;
+    font-size: 0.95em;
+}
+
+/* Mejora para mensajes de error existentes */
+.error {
+    color: #f44336;
+    font-size: 0.85em;
+    margin-top: 5px;
+    display: block;
+}
+
+/* Estilos para campos inválidos */
+.login-input:invalid {
+    border-color: #f44336;
+}
+
+.login-input:focus:invalid {
+    box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.2);
+}
+
+/* Estilo para botón deshabilitado */
+.login-btn:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Indicador de fortaleza de contraseña */
+.password-strength {
+    margin-top: 5px;
+    font-size: 0.85em;
+}
+
+.password-strength.weak {
+    color: #f44336;
+}
+
+.password-strength.medium {
+    color: #ff9800;
+}
+
+.password-strength.strong {
+    color: #4caf50;
+}
+
+/* Mensaje de ayuda para contraseña */
+.password-help {
+    color: #666;
+    font-size: 0.8em;
+    margin-top: 5px;
+    display: block;
+}
