@@ -5,7 +5,7 @@ import {
     deleteSongRequest 
 } from '../api/song.js';
 
-import SongCard from '../components/music/SongCard';
+import SongCard from '../components/music/songCard';
 import SearchSongs from '../components/music/SearchSongs';
 import CreateSongModal from '../components/music/createSongModal';
 import EditSongModal from '../components/music/editSongModal.jsx';
