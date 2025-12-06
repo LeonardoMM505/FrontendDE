@@ -1,0 +1,791 @@
+/* EditSongModal.css - TEMA OSCURO MEJORADO - SIN SCROLL HORIZONTAL */
+.esm-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.esm-modal {
+    background: #1a1a1a;
+    border-radius: 16px;
+    width: 100%;
+    max-width: min(750px, 95vw); /* Usar min() para evitar overflow */
+    max-height: min(90vh, 95vh); /* Limitar altura */
+    overflow-y: auto;
+    overflow-x: hidden; /* Eliminar scroll horizontal */
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    border: 1px solid #333;
+    animation: esm-modalSlideIn 0.3s ease-out;
+    box-sizing: border-box; /* Asegurar que padding no cause overflow */
+}
+
+@keyframes esm-modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.esm-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 32px;
+    border-bottom: 1px solid #333;
+    position: sticky;
+    top: 0;
+    background: #1a1a1a;
+    z-index: 10;
+    border-radius: 16px 16px 0 0;
+    backdrop-filter: blur(10px);
+}
+
+.esm-modal-header h2 {
+    margin: 0;
+    font-size: clamp(1.3rem, 2.5vw, 1.6rem); /* Tamaño responsive */
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80%; /* Evitar que el título sea muy largo */
+}
+
+.esm-modal-icon {
+    font-size: 1.4rem;
+    color: #7B2FFF;
+    flex-shrink: 0;
+}
+
+.esm-modal-close-btn {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #aaa;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+
+.esm-modal-close-btn:hover {
+    background: #333;
+    color: #fff;
+    border-color: #7B2FFF;
+}
+
+.esm-current-song {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 32px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+    margin: 0 32px;
+    border-radius: 12px;
+    margin-top: 20px;
+    border: 1px solid #333;
+    flex-wrap: wrap; /* Permitir wrap en pantallas pequeñas */
+}
+
+.esm-song-thumbnail {
+    width: 90px;
+    height: 90px;
+    border-radius: 12px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid #444;
+}
+
+.esm-song-thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.esm-song-info {
+    flex: 1;
+    min-width: 0; /* Permitir que el texto se ajuste */
+}
+
+.esm-song-title {
+    margin: 0 0 8px 0;
+    font-size: clamp(1.1rem, 2vw, 1.3rem);
+    color: #fff;
+    font-weight: 500;
+    word-break: break-word; /* Romper palabras largas */
+    overflow-wrap: break-word;
+}
+
+.esm-song-details {
+    margin: 0 0 6px 0;
+    color: #aaa;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    word-break: break-word;
+}
+
+.esm-song-id {
+    margin: 0;
+    color: #777;
+    font-size: 0.9rem;
+    font-family: monospace;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: inline-block;
+    word-break: break-all; /* Permitir que IDs largos se rompan */
+}
+
+.esm-alert {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin: 20px 32px;
+    animation: esm-slideDown 0.3s ease-out;
+    border: 1px solid;
+    position: relative;
+    word-break: break-word; /* Asegurar que mensajes largos se ajusten */
+}
+
+.esm-alert-error {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: #dc3545;
+    color: #ff6b6b;
+}
+
+.esm-alert::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #dc3545;
+    border-radius: 10px 0 0 10px;
+}
+
+.esm-alert-icon {
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+@keyframes esm-slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.esm-modal-form {
+    padding: 32px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.esm-form-section {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #2a2a2a;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.esm-form-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.esm-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 24px 0;
+    color: #fff;
+    font-size: clamp(1.1rem, 2vw, 1.2rem);
+    font-weight: 500;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #333;
+    width: 100%;
+    word-break: break-word;
+}
+
+.esm-section-icon {
+    font-size: 1.3rem;
+    color: #7B2FFF;
+    flex-shrink: 0;
+}
+
+.esm-form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive automático */
+    gap: 24px;
+    margin-bottom: 24px;
+    width: 100%;
+}
+
+.esm-form-group {
+    margin-bottom: 24px;
+    position: relative;
+    width: 100%;
+    min-width: 0; /* Evitar overflow */
+}
+
+.esm-form-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: #fff;
+    font-size: clamp(0.9rem, 1.5vw, 0.95rem);
+    word-break: break-word;
+}
+
+.esm-form-input {
+    width: 100%;
+    padding: 16px 18px;
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 10px;
+    font-size: clamp(0.95rem, 1.5vw, 1rem);
+    transition: all 0.2s;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box; /* Importante para evitar overflow */
+    max-width: 100%;
+}
+
+.esm-form-input:focus {
+    outline: none;
+    border-color: #7B2FFF;
+    box-shadow: 0 0 0 3px rgba(123, 47, 255, 0.25);
+    background: #222;
+}
+
+.esm-form-input::placeholder {
+    color: #666;
+}
+
+.esm-form-input.error {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.05);
+    animation: esm-shake 0.3s ease-in-out;
+}
+
+@keyframes esm-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.esm-form-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    color: #ff6b6b;
+    font-size: clamp(0.85rem, 1.5vw, 0.9rem);
+    background: rgba(255, 107, 107, 0.1);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 3px solid #ff6b6b;
+    word-break: break-word;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.esm-form-hint {
+    display: block;
+    margin-top: 8px;
+    color: #777;
+    font-size: clamp(0.8rem, 1.5vw, 0.85rem);
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.esm-image-upload {
+    margin-top: 24px;
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    flex-wrap: wrap; /* Permitir wrap en pantallas pequeñas */
+    width: 100%;
+}
+
+.esm-image-preview {
+    position: relative;
+    width: min(220px, 100%); /* Limitar ancho máximo */
+    height: 220px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px dashed #444;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.esm-preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.esm-image-preview:hover .esm-preview-image {
+    transform: scale(1.05);
+}
+
+.esm-image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    backdrop-filter: blur(5px);
+    box-sizing: border-box;
+}
+
+.esm-image-text {
+    color: #fff;
+    font-size: clamp(0.85rem, 1.5vw, 0.95rem);
+    font-weight: 500;
+    text-align: center;
+    word-break: break-word;
+    width: 100%;
+}
+
+.esm-remove-image-btn {
+    background: rgba(220, 53, 69, 0.2);
+    border: 1px solid #dc3545;
+    color: #ff6b6b;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.esm-remove-image-btn:hover {
+    background: rgba(220, 53, 69, 0.3);
+    transform: translateY(-2px);
+}
+
+.esm-file-upload-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0; /* Permitir que se ajuste */
+}
+
+.esm-file-upload-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: #2a2a2a;
+    border: 2px dashed #444;
+    padding: 16px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 200px;
+    box-sizing: border-box;
+    width: 100%;
+    justify-content: center;
+}
+
+.esm-file-upload-label:hover {
+    background: #333;
+    border-color: #7B2FFF;
+    border-style: solid;
+    transform: translateY(-2px);
+}
+
+.esm-file-upload-icon {
+    font-size: 1.4rem;
+    color: #7B2FFF;
+    flex-shrink: 0;
+}
+
+.esm-file-upload-text {
+    color: #fff;
+    font-weight: 500;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    white-space: nowrap;
+}
+
+.esm-file-input {
+    display: none;
+}
+
+.esm-file-hint {
+    display: block;
+    color: #777;
+    font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+    line-height: 1.5;
+    max-width: 100%;
+    word-break: break-word;
+}
+
+.esm-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid #333;
+    position: sticky;
+    bottom: 0;
+    background: #1a1a1a;
+    padding-bottom: 10px;
+    z-index: 5;
+    flex-wrap: wrap; /* Permitir wrap en pantallas muy pequeñas */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.esm-btn-primary, .esm-btn-secondary {
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-width: 140px;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+.esm-btn-primary {
+    background: linear-gradient(135deg, #7B2FFF 0%, #9B4CFF 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(123, 47, 255, 0.3);
+    font-weight: 600;
+}
+
+.esm-btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(123, 47, 255, 0.4);
+    background: linear-gradient(135deg, #8b3dff 0%, #a55cff 100%);
+}
+
+.esm-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    background: linear-gradient(135deg, #5a1db3 0%, #7b3acc 100%);
+}
+
+.esm-btn-secondary {
+    background: #2a2a2a;
+    color: #ccc;
+    border: 1px solid #444;
+}
+
+.esm-btn-secondary:hover:not(:disabled) {
+    background: #333;
+    color: #fff;
+    border-color: #555;
+    transform: translateY(-2px);
+}
+
+.esm-spinner-small {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: esm-spin 0.8s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes esm-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Scrollbar personalizado - solo vertical */
+.esm-modal::-webkit-scrollbar {
+    width: 8px;
+}
+
+.esm-modal::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 5px;
+}
+
+.esm-modal::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 5px;
+    border: 2px solid #1a1a1a;
+}
+
+.esm-modal::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+/* Campos requeridos */
+.esm-form-label::after {
+    content: " *";
+    color: #ff6b6b;
+    opacity: 0.7;
+}
+
+.esm-form-label:not(.required)::after {
+    content: "";
+}
+
+/* Efecto de enfoque para errores */
+.esm-form-input.error:focus {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.25);
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* MEDIA QUERIES PARA RESPONSIVE */
+@media (max-width: 768px) {
+    .esm-modal-overlay {
+        padding: 10px;
+        align-items: flex-start;
+        padding-top: 20px;
+    }
+    
+    .esm-modal {
+        max-height: 90vh;
+        margin: 0;
+        max-width: 95vw;
+        overflow-x: hidden;
+    }
+    
+    .esm-modal-header {
+        padding: 20px 24px;
+    }
+    
+    .esm-modal-header h2 {
+        font-size: 1.3rem;
+        max-width: 70%;
+    }
+    
+    .esm-modal-form {
+        padding: 24px;
+    }
+    
+    .esm-form-row {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .esm-current-song {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+        margin: 0 24px 20px;
+        gap: 15px;
+    }
+    
+    .esm-song-thumbnail {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .esm-image-upload {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+    }
+    
+    .esm-image-preview {
+        width: min(180px, 100%);
+        height: 180px;
+        margin: 0 auto;
+    }
+    
+    .esm-file-upload-container {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .esm-file-upload-label {
+        justify-content: center;
+        min-width: auto;
+        width: 100%;
+        padding: 14px 20px;
+    }
+    
+    .esm-file-upload-text {
+        font-size: 0.95rem;
+    }
+    
+    .esm-modal-actions {
+        flex-direction: column;
+        gap: 12px;
+        position: static;
+        margin-top: 30px;
+    }
+    
+    .esm-btn-primary, .esm-btn-secondary {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 20px;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .esm-modal-overlay {
+        padding: 5px;
+    }
+    
+    .esm-modal {
+        max-width: 98vw;
+        border-radius: 12px;
+    }
+    
+    .esm-modal-header {
+        padding: 16px 20px;
+    }
+    
+    .esm-modal-header h2 {
+        font-size: 1.2rem;
+        max-width: 65%;
+    }
+    
+    .esm-modal-form {
+        padding: 20px;
+    }
+    
+    .esm-form-input {
+        padding: 14px 16px;
+        font-size: 0.95rem;
+    }
+    
+    .esm-current-song {
+        margin: 0 20px 16px;
+        padding: 16px;
+    }
+    
+    .esm-alert {
+        margin: 16px 20px;
+        padding: 14px 18px;
+    }
+}
+
+/* Prevenir overflow en todos los elementos */
+.esm-modal * {
+    max-width: 100%;
+}
+
+/* Asegurar que los inputs no causen overflow */
+input, textarea, select, button {
+    max-width: 100%;
+}
+
+/* Clase para forzar el ajuste de texto */
+.break-word {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Estilos adicionales para CreateSongModal */
+.esm-image-preview-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+    border: 2px dashed #444;
+}
+
+.esm-image-preview-empty.esm-image-preview {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.05);
+}
+
+.esm-image-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: #aaa;
+    text-align: center;
+    padding: 20px;
+}
+
+.esm-placeholder-icon {
+    font-size: 2.5rem;
+    opacity: 0.7;
+}
+
+.esm-placeholder-text {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* Estado de error para imagen vacía */
+.esm-image-preview-empty.error {
+    border-color: #ff6b6b;
+    animation: esm-pulse 1.5s infinite;
+}
+
+@keyframes esm-pulse {
+    0%, 100% { border-color: #ff6b6b; }
+    50% { border-color: #ff9292; }
+}
+
+/* Ajustes específicos para Create modal */
+.esm-section-title .required-note {
+    font-size: 0.85rem;
+    color: #777;
+    margin-left: auto;
+    font-weight: normal;
+}
+
+/* Mejora para el botón de upload */
+.esm-file-upload-label.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-style: dashed;
+}
+
+.esm-file-upload-label.disabled:hover {
+    background: #2a2a2a;
+    border-color: #444;
+    transform: none;
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getUserPlaylistsRequest, addSongToPlaylistRequest, createPlaylistRequest } from '../../api/playlist.js'; // ← Agregar createPlaylistRequest
+import { getUserPlaylistsRequest, addSongToPlaylistRequest, createPlaylistRequest } from '../../api/playlist.js';
 import { useAuth } from '../../context/auth.js';
+import './AddToPlaylistModal.css'; // Crearemos este archivo CSS
 
 const AddToPlaylistModal = ({ song, onClose, onSuccess }) => {
     const [playlists, setPlaylists] = useState([]);
@@ -8,9 +9,10 @@ const AddToPlaylistModal = ({ song, onClose, onSuccess }) => {
     const [selectedPlaylist, setSelectedPlaylist] = useState('');
     const [creatingNew, setCreatingNew] = useState(false);
     const [newPlaylistName, setNewPlaylistName] = useState('');
-    const [newPlaylistGenre, setNewPlaylistGenre] = useState(''); // ← Agregar género
+    const [newPlaylistGenre, setNewPlaylistGenre] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
+    const [errors, setErrors] = useState({});
     
     const { user } = useAuth();
     const userId = user?.id || user?.IdUs;
@@ -24,12 +26,12 @@ const AddToPlaylistModal = ({ song, onClose, onSuccess }) => {
     const loadUserPlaylists = async () => {
         try {
             setLoading(true);
+            setError('');
             const response = await getUserPlaylistsRequest(userId);
             
-            // Normalizar las playlists (idPlay vs IdPlay)
             const normalizedPlaylists = response.data.map(playlist => ({
                 ...playlist,
-                idPlay: playlist.idPlay || playlist.IdPlay // Asegurar idPlay
+                idPlay: playlist.idPlay || playlist.IdPlay
             }));
             
             setPlaylists(normalizedPlaylists);
@@ -41,26 +43,47 @@ const AddToPlaylistModal = ({ song, onClose, onSuccess }) => {
         }
     };
 
+    const validateNewPlaylist = () => {
+        const newErrors = {};
+        
+        if (!newPlaylistName.trim()) {
+            newErrors.name = 'El nombre es requerido';
+        } else if (newPlaylistName.trim().length < 3) {
+            newErrors.name = 'El nombre debe tener al menos 3 caracteres';
+        }
+        
+        if (!newPlaylistGenre.trim()) {
+            newErrors.genre = 'El género es requerido';
+        } else {
+            const genres = newPlaylistGenre.split(',').map(g => g.trim()).filter(g => g);
+            if (genres.length === 0) {
+                newErrors.genre = 'Ingresa al menos un género válido';
+            }
+        }
+        
+        return newErrors;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setSubmitting(true);
         setError('');
+        setErrors({});
 
         try {
             let playlistId = selectedPlaylist;
 
             // Si está creando nueva playlist
             if (creatingNew) {
-                if (!newPlaylistName.trim()) {
-                    setError('Ingresa un nombre para la nueva playlist');
-                    setSubmitting(false);
+                const validationErrors = validateNewPlaylist();
+                if (Object.keys(validationErrors).length > 0) {
+                    setErrors(validationErrors);
                     return;
                 }
                 
                 // Crear nueva playlist
                 const newPlaylistData = {
-                    NomPlay: newPlaylistName,
-                    genero: newPlaylistGenre || undefined
+                    NomPlay: newPlaylistName.trim(),
+                    genero: newPlaylistGenre.split(',').map(g => g.trim()).filter(g => g).join(', ')
                 };
                 
                 const createResponse = await createPlaylistRequest(newPlaylistData);
@@ -76,32 +99,29 @@ const AddToPlaylistModal = ({ song, onClose, onSuccess }) => {
 
             if (!playlistId) {
                 setError('Selecciona una playlist');
-                setSubmitting(false);
                 return;
             }
 
             // Agregar canción a playlist
+            setSubmitting(true);
             await addSongToPlaylistRequest({
                 playlistId: parseInt(playlistId),
                 songId: song.IdMus
             });
 
             onSuccess();
-            onClose(); // Cerrar modal después de éxito
+            onClose();
             
         } catch (error) {
             console.error('Error adding to playlist:', error);
             
-            // Manejar errores específicos
             if (error.response?.data?.message) {
                 const errorMsg = error.response.data.message;
-                if (Array.isArray(errorMsg)) {
-                    setError(errorMsg[0] || 'Error al agregar a la playlist');
+                if (errorMsg.includes('ya está')) {
+                    setError('Esta canción ya está en la playlist seleccionada');
                 } else {
                     setError(errorMsg);
                 }
-            } else if (error.message === "La canción ya está dentro de la playlist") {
-                setError('Esta canción ya está en la playlist seleccionada');
             } else {
                 setError('Error al agregar a la playlist');
             }
@@ -110,144 +130,194 @@ const AddToPlaylistModal = ({ song, onClose, onSuccess }) => {
         }
     };
 
-    // Función para obtener el conteo de canciones (podrías obtenerlo del backend)
     const getSongCount = (playlist) => {
-        // Esto es temporal - idealmente el backend debería devolver el conteo
         return playlist.songCount || playlist.totalCanciones || 0;
     };
 
-    return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
-                    <h2>🎵 Agregar a Playlist</h2>
-                    <button className="btn-close" onClick={onClose}>×</button>
-                </div>
+    // En tu AddToPlaylistModal.js, reemplaza las clases en el JSX:
 
-                <div className="song-info">
-                    <h3>{song.NomMus}</h3>
-                    <p>{song.Art} • {song.Album} {song.AnPu && `(${song.AnPu})`}</p>
-                </div>
+return (
+    <div className="atpl-modal-overlay" onClick={onClose}>
+        <div className="atpl-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="atpl-modal-header">
+                <h2>
+                    <span className="atpl-modal-icon">🎵</span>
+                    Agregar a Playlist
+                </h2>
+                <button className="atpl-modal-close-btn" onClick={onClose}>
+                    ✕
+                </button>
+            </div>
 
-                <form onSubmit={handleSubmit} className="add-to-playlist-form">
-                    {error && (
-                        <div className="error-message">
-                            ⚠️ {error}
+            <div className="atpl-song-card-preview">
+                <div className="atpl-song-thumbnail">
+                    <img 
+                        src={song.UrlPort || 'https://via.placeholder.com/60x60/2c3e50/ffffff?text=M'} 
+                        alt={song.NomMus}
+                        onError={(e) => e.target.src = 'https://via.placeholder.com/60x60/2c3e50/ffffff?text=M'}
+                    />
+                </div>
+                <div className="atpl-song-details">
+                    <h3 className="atpl-song-title">{song.NomMus}</h3>
+                    <p className="atpl-song-info">{song.Art} • {song.Album}</p>
+                    {song.AnPu && <span className="atpl-song-year">{song.AnPu}</span>}
+                </div>
+            </div>
+
+            {error && (
+                <div className="atpl-alert atpl-alert-error">
+                    <span className="atpl-alert-icon">⚠️</span>
+                    <span>{error}</span>
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="atpl-modal-form">
+                <div className="atpl-form-section">
+                    <h3 className="atpl-section-title">
+                        <span className="atpl-section-icon">📋</span>
+                        Tus Playlists
+                    </h3>
+                    
+                    {loading ? (
+                        <div className="atpl-loading-state">
+                            <div className="atpl-spinner"></div>
+                            <p>Cargando tus playlists...</p>
+                        </div>
+                    ) : playlists.length === 0 ? (
+                        <div className="atpl-empty-state">
+                            <p className="atpl-empty-text">📭 No tienes playlists</p>
+                            <p className="atpl-empty-hint">Crea tu primera playlist</p>
+                        </div>
+                    ) : (
+                        <div className="atpl-playlists-grid">
+                            {playlists.map(playlist => {
+                                const playlistId = playlist.idPlay;
+                                const isSelected = selectedPlaylist === playlistId.toString();
+                                
+                                return (
+                                    <div 
+                                        key={playlistId}
+                                        className={`atpl-playlist-card-select ${isSelected ? 'selected' : ''}`}
+                                        onClick={() => {
+                                            setSelectedPlaylist(playlistId.toString());
+                                            setCreatingNew(false);
+                                        }}
+                                    >
+                                        <div className="atpl-playlist-card-header">
+                                            <input
+                                                type="radio"
+                                                name="playlist"
+                                                value={playlistId}
+                                                checked={isSelected}
+                                                onChange={() => {}}
+                                                className="atpl-playlist-radio"
+                                            />
+                                            <div className="atpl-playlist-emoji">🎧</div>
+                                            <h4 className="atpl-playlist-name">{playlist.NomPlay}</h4>
+                                        </div>
+                                        
+                                        <div className="atpl-playlist-card-body">
+                                            {playlist.genero && (
+                                                <div className="atpl-playlist-tags">
+                                                    {playlist.genero.split(',').map((genre, idx) => (
+                                                        <span key={idx} className="atpl-tag">{genre.trim()}</span>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            
+                                            <div className="atpl-playlist-stats">
+                                                <span className="atpl-stat">
+                                                    <span className="atpl-stat-icon">🎵</span>
+                                                    {getSongCount(playlist)} canciones
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     )}
+                </div>
 
-                    {loading ? (
-                        <div className="loading">Cargando tus playlists...</div>
-                    ) : (
-                        <>
-                            <div className="form-section">
-                                <label className="section-label">Seleccionar playlist existente:</label>
-                                
-                                {playlists.length === 0 ? (
-                                    <p className="no-playlists-message">
-                                        No tienes playlists. Crea una nueva.
-                                    </p>
-                                ) : (
-                                    <div className="playlists-list">
-                                        {playlists.map(playlist => {
-                                            // Usar idPlay normalizado
-                                            const playlistId = playlist.idPlay;
-                                            
-                                            return (
-                                                <label key={playlistId} className="playlist-option">
-                                                    <input
-                                                        type="radio"
-                                                        name="playlist"
-                                                        value={playlistId}
-                                                        checked={selectedPlaylist === playlistId.toString()}
-                                                        onChange={(e) => {
-                                                            setSelectedPlaylist(e.target.value);
-                                                            setCreatingNew(false);
-                                                        }}
-                                                    />
-                                                    <span className="playlist-info">
-                                                        <strong>{playlist.NomPlay}</strong>
-                                                        {playlist.genero && (
-                                                            <span className="playlist-genre"> • {playlist.genero}</span>
-                                                        )}
-                                                        <span className="playlist-count">
-                                                            ({getSongCount(playlist)} canciones)
-                                                        </span>
-                                                    </span>
-                                                </label>
-                                            );
-                                        })}
-                                    </div>
-                                )}
-                            </div>
+                <div className="atpl-divider">
+                    <span className="atpl-divider-text">O</span>
+                </div>
 
-                            <div className="divider">
-                                <span></span>
-                            </div>
-
-                            <div className="form-section">
-                                <label className="create-new-label">
-                                    <input
-                                        type="radio"
-                                        name="playlistOption"
-                                        checked={creatingNew}
-                                        onChange={() => {
-                                            setCreatingNew(true);
-                                            setSelectedPlaylist('');
-                                        }}
-                                    />
-                                    <strong> Crear nueva playlist</strong>
-                                </label>
-                                
-                                {creatingNew && (
-                                    <div className="new-playlist-form">
-                                        <div className="form-group">
-                                            <input
-                                                type="text"
-                                                value={newPlaylistName}
-                                                onChange={(e) => setNewPlaylistName(e.target.value)}
-                                                placeholder="Nombre de la nueva playlist *"
-                                                className="new-playlist-input"
-                                                autoFocus
-                                                required
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <input
-                                                type="text"
-                                                value={newPlaylistGenre}
-                                                onChange={(e) => setNewPlaylistGenre(e.target.value)}
-                                                placeholder="Género (opcional)"
-                                                className="new-playlist-input"
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </>
-                    )}
-
-                    <div className="form-actions">
-                        <button 
-                            type="submit" 
-                            className="btn-submit"
-                            disabled={submitting || loading}
-                        >
-                            {submitting ? '🔄 Agregando...' : '✅ Agregar a Playlist'}
-                        </button>
-                        <button 
-                            type="button" 
-                            className="btn-cancel"
-                            onClick={onClose}
-                            disabled={submitting}
-                        >
-                            Cancelar
-                        </button>
+                <div className="atpl-form-section">
+                    <div 
+                        className={`atpl-create-playlist-toggle ${creatingNew ? 'active' : ''}`}
+                        onClick={() => setCreatingNew(!creatingNew)}
+                    >
+                        <div className="atpl-toggle-header">
+                            <div className="atpl-toggle-icon">✨</div>
+                            <h3 className="atpl-toggle-title">Crear nueva playlist</h3>
+                            <div className="atpl-toggle-arrow">{creatingNew ? '▼' : '▶'}</div>
+                        </div>
                     </div>
-                </form>
-            </div>
+                    
+                    {creatingNew && (
+                        <div className="atpl-create-playlist-form">
+                            <div className="atpl-form-group">
+                                <label className="atpl-form-label">
+                                    Nombre de la playlist *
+                                </label>
+                                <input
+                                    type="text"
+                                    value={newPlaylistName}
+                                    onChange={(e) => setNewPlaylistName(e.target.value)}
+                                    placeholder="Ej: Mis Favoritas 2024"
+                                    className={`atpl-form-input ${errors.name ? 'error' : ''}`}
+                                    autoFocus
+                                />
+                                {errors.name && <span className="atpl-form-error">{errors.name}</span>}
+                            </div>
+                            
+                            <div className="atpl-form-group">
+                                <label className="atpl-form-label">
+                                    Género(s) *
+                                </label>
+                                <input
+                                    type="text"
+                                    value={newPlaylistGenre}
+                                    onChange={(e) => setNewPlaylistGenre(e.target.value)}
+                                    placeholder="Ej: Rock, Pop, Electrónica"
+                                    className={`atpl-form-input ${errors.genre ? 'error' : ''}`}
+                                />
+                                {errors.genre && <span className="atpl-form-error">{errors.genre}</span>}
+                                <small className="atpl-form-hint">Separa múltiples géneros con comas</small>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                <div className="atpl-modal-actions">
+                    <button 
+                        type="button" 
+                        className="atpl-btn-secondary"
+                        onClick={onClose}
+                        disabled={submitting}
+                    >
+                        Cancelar
+                    </button>
+                    <button 
+                        type="submit" 
+                        className="atpl-btn-primary"
+                        disabled={submitting || (creatingNew && (!newPlaylistName || !newPlaylistGenre))}
+                    >
+                        {submitting ? (
+                            <>
+                                <span className="atpl-spinner-small"></span>
+                                Agregando...
+                            </>
+                        ) : (
+                            'Agregar a Playlist'
+                        )}
+                    </button>
+                </div>
+            </form>
         </div>
-    );
+    </div>
+);
 };
 
 export default AddToPlaylistModal;

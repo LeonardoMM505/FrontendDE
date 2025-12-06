@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import {
     getAllPlaylistsRequest,
     deletePlaylistRequest,
-    searchAllPlaylistsRequest
+    searchAllPlaylistsRequest,
+    getPlaylistSongsRequest 
 } from '../api/playlist';
+import { getUsersRequest} from '../api/auth.js'; // Importar API de usuarios
 import { useAuth } from '../context/auth.js';
 import SearchPlaylists from '../components/playlist/searchPlaylist.jsx';
 
@@ -13,6 +15,7 @@ const AdminPlaylistsPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [searchPerformed, setSearchPerformed] = useState(false);
+    const [users, setUsers] = useState({}); // Almacenar usuarios por ID
 
     const { user, authLoading } = useAuth();
 
@@ -28,7 +31,39 @@ const AdminPlaylistsPage = () => {
         }
 
         loadAllPlaylists();
+        loadUsers(); // Cargar usuarios
     }, [authLoading, user]);
+
+    // Cargar todos los usuarios
+    const loadUsers = async () => {
+        try {
+            const response = await getUsersRequest();
+            const usersData = response.data;
+            
+            // Crear un objeto para acceder rápido por ID
+            const usersMap = {};
+            usersData.forEach(user => {
+                const userId = user.idUs || user.IdUs;
+                usersMap[userId] = {
+                    id: userId,
+                    name: user.NomUs || user.nombre || `Usuario ${userId}`
+                };
+            });
+            
+            setUsers(usersMap);
+        } catch (error) {
+            console.error('Error cargando usuarios:', error);
+        }
+    };
+
+    // Función para obtener nombre de usuario
+    const getUserName = (userId) => {
+        const user = users[userId];
+        if (user) {
+            return user.name;
+        }
+        return `Usuario #${userId}`; // Fallback si no se encuentra
+    };
 
     const loadAllPlaylists = async () => {
         try {
@@ -37,7 +72,32 @@ const AdminPlaylistsPage = () => {
             setSearchPerformed(false);
 
             const response = await getAllPlaylistsRequest();
-            setPlaylists(response.data);
+            const playlistsData = response.data;
+
+            // Obtener el conteo de canciones para cada playlist
+            const playlistsWithCounts = await Promise.all(
+                playlistsData.map(async playlist => {
+                    const playlistId = playlist.idPlay || playlist.IdPlay;
+
+                    try {
+                        const songsResponse = await getPlaylistSongsRequest(playlistId);
+                        return {
+                            ...playlist,
+                            idPlay: playlistId,
+                            totalCanciones: songsResponse.data?.length || 0
+                        };
+                    } catch (error) {
+                        console.error(`Error cargando canciones para la playlist ${playlistId}:`, error);
+                        return {
+                            ...playlist,
+                            idPlay: playlistId,
+                            totalCanciones: 0
+                        };
+                    }
+                })
+            );
+
+            setPlaylists(playlistsWithCounts);
         } catch (error) {
             console.error('Error loading all playlists:', error);
             setError('Error al cargar todas las playlists');
@@ -100,12 +160,8 @@ const AdminPlaylistsPage = () => {
         <div className="admin-playlists-page">
             {/*************** HEADER ***************/}
             <header className="page-header admin-header">
-                <h1>🧑‍💼 Administración de Playlists</h1>
+                <h1>Administración de Playlists</h1>
                 <p>Gestiona todas las playlists del sistema</p>
-
-                <Link to="/playlists" className="btn-back-admin">
-                    ← Mis Playlists Personales
-                </Link>
             </header>
 
             {/*************** SEARCH ***************/}
@@ -148,6 +204,8 @@ const AdminPlaylistsPage = () => {
                             <tbody>
                                 {playlists.map((playlist) => {
                                     const playlistId = playlist.idPlay || playlist.IdPlay;
+                                    const userId = playlist.IdUs;
+                                    const userName = getUserName(userId);
 
                                     return (
                                         <tr key={playlistId}>
@@ -164,10 +222,15 @@ const AdminPlaylistsPage = () => {
                                             </td>
 
                                             <td className="playlist-owner-admin">
-                                                Usuario #{playlist.IdUs}
+                                                <div className="user-info">
+                                                    <span className="user-name">{userName}</span>
+                                                    <span className="user-id">(ID: {userId})</span>
+                                                </div>
                                             </td>
 
-                                            <td className="playlist-songs-admin">—</td>
+                                            <td className="playlist-songs-admin">
+                                                {playlist.totalCanciones || 0} canción(es)
+                                            </td>
 
                                             <td className="playlist-actions-admin">
                                                 <Link
@@ -208,7 +271,7 @@ const AdminPlaylistsPage = () => {
 export default AdminPlaylistsPage;
 
 
-/*************** ESTILOS ***************/
+/*************** ESTILOS ACTUALIZADOS ***************/
 const styles = `
 .admin-playlists-page {
     padding: 20px;
@@ -276,6 +339,23 @@ const styles = `
     border-bottom: 1px solid #2d2d33;
 }
 
+/**************** USER INFO ****************/
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.user-name {
+    font-weight: bold;
+    color: #60a5fa;
+}
+
+.user-id {
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
 /**************** LINKS & TAGS ****************/
 .playlist-link-admin {
     color: #a855f7;
@@ -315,6 +395,38 @@ const styles = `
 
 .btn-delete-admin:hover {
     background: #b91c1c;
+}
+
+/**************** UTILITY CLASSES ****************/
+.loading {
+    text-align: center;
+    padding: 50px;
+    color: #aaa;
+}
+
+.error-message {
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid #dc2626;
+    color: #f87171;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.no-results,
+.no-playlists {
+    text-align: center;
+    padding: 50px;
+    color: #888;
+    font-size: 1.1rem;
+}
+
+.search-info {
+    margin: 15px 0;
+    color: #a855f7;
+    font-weight: bold;
+    text-align: center;
 }
 `;
 

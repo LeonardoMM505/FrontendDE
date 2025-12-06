@@ -1,8 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import './SearchPlaylists.css';
 
-const SearchPlaylists = ({ onSearch, onClear }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+const SearchPlaylists = ({ onSearch, onClear, searchResultsCount = 0, searchQuery: externalSearchQuery = '' }) => {
+  const [searchQuery, setSearchQuery] = useState(externalSearchQuery);
   const [searching, setSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const searchRef = useRef(null);
+
+  // Sincronizar con el término de búsqueda externo
+  useEffect(() => {
+    setSearchQuery(externalSearchQuery);
+    setHasSearched(!!externalSearchQuery);
+  }, [externalSearchQuery]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,6 +23,7 @@ const SearchPlaylists = ({ onSearch, onClear }) => {
     }
 
     setSearching(true);
+    setHasSearched(true);
     try {
       await onSearch(searchQuery);
     } catch (error) {
@@ -24,57 +35,111 @@ const SearchPlaylists = ({ onSearch, onClear }) => {
 
   const handleClear = () => {
     setSearchQuery("");
+    setHasSearched(false);
     onClear();
   };
 
+  const handleShowAll = () => {
+    setSearchQuery("");
+    setHasSearched(false);
+    onClear();
+  };
+
+  const handleKeyDown = (e) => {
+    // Tecla Enter para buscar
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (searchQuery.trim()) {
+        handleSubmit(e);
+      }
+    }
+    
+    // Tecla Escape para limpiar
+    if (e.key === 'Escape') {
+      e.target.blur();
+      if (!searchQuery.trim()) {
+        handleClear();
+      }
+    }
+  };
+
   return (
-    <div className="w-full max-w-xl mx-auto mb-6 animate-fadeIn">
-      <form onSubmit={handleSubmit} className="w-full">
-        <div className="relative">
-          {/* INPUT */}
+    <div className="spl-search-container" ref={searchRef}>
+      <div className="spl-search-header">
+        <h3 className="spl-search-title">
+          <span className="spl-search-icon">📋</span>
+          Buscar Playlists
+        </h3>
+        
+        {hasSearched && searchResultsCount > 0 && (
+          <div className="spl-results-count">
+            <span className="spl-count-badge">{searchResultsCount}</span>
+            <span className="spl-results-text">
+              {searchResultsCount === 1 ? ' playlist encontrada' : ' playlists encontradas'}
+            </span>
+          </div>
+        )}
+      </div>
+
+      <form onSubmit={handleSubmit} className={`spl-search-form ${isFocused ? 'focused' : ''}`}>
+        <div className="spl-input-container">
+          <div className="spl-icon-left">
+            🔍
+          </div>
+          
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Buscar playlists por nombre, género o ID usuario..."
-            className="
-              w-full py-3 pl-4 pr-28 rounded-xl border shadow-sm
-              focus:outline-none focus:ring-2 focus:ring-indigo-500
-              placeholder:text-gray-400 text-gray-800
-            "
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            onKeyDown={handleKeyDown}
+            placeholder="Buscar por nombre, género, ID usuario..."
+            className="spl-search-input"
           />
-
-          {/* BOTONES DENTRO DEL INPUT */}
-          <div className="absolute top-1/2 -translate-y-1/2 right-2 flex gap-1">
-            <button
-              type="submit"
-              disabled={searching}
-              className="
-                px-3 py-1 text-sm rounded-lg bg-indigo-600 text-white
-                hover:bg-indigo-700 transition disabled:opacity-50
-              "
+          
+        
+            <button 
+              type="button" 
+              onClick={handleClear}
+              className="spl-clear-btn"
+              aria-label="Limpiar búsqueda"
             >
-              {searching ? "Buscando..." : "Buscar"}
+              ✕
             </button>
-
+       
+        </div>
+        
+        <div className="spl-actions">
+          <button
+            type="submit"
+            disabled={searching || !searchQuery.trim()}
+            className="spl-btn-search"
+          >
+            {searching ? (
+              <>
+                <span className="spl-spinner-small"></span>
+                Buscando...
+              </>
+            ) : (
+              'Buscar'
+            )}
+          </button>
+          
+          {hasSearched && (
             <button
               type="button"
-              disabled={searching}
-              onClick={handleClear}
-              className="
-                px-3 py-1 text-sm rounded-lg bg-gray-200
-                hover:bg-gray-300 transition disabled:opacity-50
-              "
+              onClick={handleShowAll}
+              className="spl-btn-show-all"
             >
-              Limpiar
+              Ver Todas
             </button>
-          </div>
+          )}
         </div>
-
-        <small className="block mt-2 text-gray-500 text-sm px-1">
-          Puedes buscar por nombre, género o ID del usuario
-        </small>
       </form>
+      
+      {/* Consejos de búsqueda */}
+      
     </div>
   );
 };

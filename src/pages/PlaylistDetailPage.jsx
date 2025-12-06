@@ -3,10 +3,10 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getPlaylistByIdRequest, getPlaylistSongsRequest, deletePlaylistRequest } from '../api/playlist';
 import { useAuth } from '../context/auth.js';
 import SongCard from '../components/music/SongCard';
+import { getUsersRequest } from '../api/auth.js';
 import EditPlaylistModal from '../components/playlist/editPlaylistModal.jsx';
 import RemoveFromPlaylistButton from '../components/music/removeFromPlaylistButton.jsx';
-
-
+import AddToPlaylistModal from '../components/music/AddToPlaylistModal';
 
 const PlaylistDetailPage = () => {
     const { id } = useParams();
@@ -16,6 +16,9 @@ const PlaylistDetailPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showAddToPlaylistModal, setShowAddToPlaylistModal] = useState(false);
+    const [selectedSong, setSelectedSong] = useState(null);
+      const [users, setUsers] = useState({}); // Almacenar usuarios por ID
     
     const { user } = useAuth();
     
@@ -23,9 +26,9 @@ const PlaylistDetailPage = () => {
     const isAdmin = userRole === 'admin';
     const isOwner = playlist && (user?.id === playlist?.IdUs || user?.IdUs === playlist?.IdUs);
     
-    const canEdit = isAdmin || isOwner;
-    const canDelete = isAdmin || isOwner;
-    const canAddSongs = isAdmin || isOwner;
+    const canEditPlaylist = isAdmin || isOwner;
+    const canDeletePlaylist = isAdmin || isOwner;
+    const canAddSongsToPlaylist = isAdmin || isOwner;
     const canRemoveSongs = isAdmin || isOwner;
 
     useEffect(() => {
@@ -33,7 +36,7 @@ const PlaylistDetailPage = () => {
             navigate('/playlists');
             return;
         }
-        
+        loadUsers();
         loadPlaylistDetails();
     }, [id, navigate]);
 
@@ -70,6 +73,45 @@ const PlaylistDetailPage = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const loadUsers = async () => {
+            try {
+                const response = await getUsersRequest();
+                const usersData = response.data;
+                
+                // Crear un objeto para acceder rápido por ID
+                const usersMap = {};
+                usersData.forEach(user => {
+                    const userId = user.idUs || user.IdUs;
+                    usersMap[userId] = {
+                        id: userId,
+                        name: user.NomUs || user.nombre || `Usuario ${userId}`
+                    };
+                });
+                
+                setUsers(usersMap);
+            } catch (error) {
+                console.error('Error cargando usuarios:', error);
+            }
+        };
+    
+        // Función para obtener nombre de usuario
+        const getUserName = (userId) => {
+            const user = users[userId];
+            if (user) {
+                return user.name;
+            }
+            return `Usuario #${userId}`; // Fallback si no se encuentra
+        };
+
+    const handleAddToPlaylist = (song) => {
+        setSelectedSong(song);
+        setShowAddToPlaylistModal(true);
+    };
+
+    const handleAddSuccess = () => {
+        setShowAddToPlaylistModal(false);
     };
 
     const handleDeletePlaylist = async () => {
@@ -129,21 +171,23 @@ const PlaylistDetailPage = () => {
 
                         <p className="playlist-details">
                             {songs.length} {songs.length === 1 ? 'canción' : 'canciones'} • 
-                            Creada por {playlist.user?.NomUs || (isOwner ? 'Tú' : `Usuario #${playlist.IdUs}`)}
+                            Creada por { ' ' }
+                            {getUserName(playlist.IdUs)}
                             {isAdmin && !isOwner && ' (Vista como admin)'}
                         </p>
                     </div>
 
-                    {canEdit && (
+                    {/* BOTONES SOLO PARA EDITAR/ELIMINAR LA PLAYLIST, NO LAS CANCIONES */}
+                    {canEditPlaylist && (
                         <div className="playlist-actions">
                             <button 
                                 className="btn-primary"
                                 onClick={() => setShowEditModal(true)}
                             >
-                                ✏️ {isAdmin ? "Editar (Admin)" : "Editar"}
+                                ✏️ {isAdmin ? "Editar Playlist (Admin)" : "Editar Playlist"}
                             </button>
 
-                            {canAddSongs && (
+                            {canAddSongsToPlaylist && (
                                 <Link to={`/songs?playlist=${id}`} className="btn-secondary">
                                     ➕ Agregar Canciones
                                 </Link>
@@ -153,7 +197,7 @@ const PlaylistDetailPage = () => {
                                 className="btn-danger"
                                 onClick={handleDeletePlaylist}
                             >
-                                🗑️ {isAdmin ? "Eliminar (Admin)" : "Eliminar"}
+                                🗑️ {isAdmin ? "Eliminar Playlist (Admin)" : "Eliminar Playlist"}
                             </button>
                         </div>
                     )}
@@ -176,7 +220,7 @@ const PlaylistDetailPage = () => {
                 {songs.length === 0 ? (
                     <div className="empty-state">
                         <p>🎵 Esta playlist está vacía</p>
-                        {canAddSongs && (
+                        {canAddSongsToPlaylist && (
                             <Link to={`/songs?playlist=${id}`} className="btn-primary">
                                 ➕ Agregar Canciones desde el Catálogo
                             </Link>
@@ -192,8 +236,16 @@ const PlaylistDetailPage = () => {
                         <div className="songs-grid">
                             {songs.map(song => (
                                 <div key={song.IdMus} className="song-wrapper">
-                                    <SongCard song={song} />
+                                    {/* IMPORTANTE: isAdmin = false para que no muestre botones de admin */}
+                                    <SongCard 
+                                        song={song} 
+                                        onAddToPlaylist={handleAddToPlaylist}
+                                        onEdit={() => {}} // No se usará aquí
+                                        onDelete={() => {}} // No se usará aquí
+                                        isAdmin={false} // ← ESTA ES LA CLAVE: false para NO mostrar botones de admin
+                                    />
 
+                                    {/* Solo botón para remover de playlist si tiene permiso */}
                                     {canRemoveSongs && (
                                         <RemoveFromPlaylistButton 
                                             playlistId={id}
@@ -209,12 +261,24 @@ const PlaylistDetailPage = () => {
                 )}
             </div>
 
+            {/* MODALES */}
             {showEditModal && (
                 <EditPlaylistModal 
                     playlist={playlist}
                     onClose={() => setShowEditModal(false)}
                     onSuccess={handleEditSuccess}
                     isAdminMode={isAdmin && !isOwner}
+                />
+            )}
+
+            {showAddToPlaylistModal && selectedSong && (
+                <AddToPlaylistModal
+                    song={selectedSong}
+                    onClose={() => {
+                        setShowAddToPlaylistModal(false);
+                        setSelectedSong(null);
+                    }}
+                    onSuccess={handleAddSuccess}
                 />
             )}
         </div>

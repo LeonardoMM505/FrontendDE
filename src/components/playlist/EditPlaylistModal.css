@@ -1,0 +1,414 @@
+/* EditPlaylistModal.css - Diseño simple y elegante */
+.epl-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.epl-modal {
+    background: #1a1a1a;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    border: 1px solid #333;
+    animation: epl-modalSlideIn 0.3s ease-out;
+}
+
+@keyframes epl-modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.epl-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px;
+    border-bottom: 1px solid #333;
+    position: sticky;
+    top: 0;
+    background: #1a1a1a;
+    z-index: 10;
+    border-radius: 16px 16px 0 0;
+    backdrop-filter: blur(10px);
+}
+
+.epl-modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.epl-modal-icon {
+    font-size: 1.3rem;
+    color: #7B2FFF;
+}
+
+.epl-modal-close-btn {
+    background: #2a2a2a;
+    border: 1px solid #444;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #aaa;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.epl-modal-close-btn:hover {
+    background: #333;
+    color: #fff;
+    border-color: #7B2FFF;
+}
+
+.epl-current-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
+    margin: 0 24px;
+    border-radius: 12px;
+    margin-top: 16px;
+    border: 1px solid #333;
+}
+
+.epl-playlist-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #7B2FFF 0%, #9B4CFF 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+
+.epl-playlist-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.epl-current-title {
+    margin: 0 0 6px 0;
+    font-size: 1.2rem;
+    color: #fff;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+.epl-current-id {
+    margin: 0;
+    color: #777;
+    font-size: 0.9rem;
+    font-family: monospace;
+}
+
+.epl-alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 16px 24px;
+    animation: epl-slideDown 0.3s ease-out;
+    border: 1px solid;
+}
+
+.epl-alert-error {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: #dc3545;
+    color: #ff6b6b;
+}
+
+.epl-alert::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: #dc3545;
+    border-radius: 8px 0 0 8px;
+}
+
+.epl-alert-icon {
+    font-size: 1.2rem;
+}
+
+@keyframes epl-slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.epl-modal-form {
+    padding: 24px;
+}
+
+.epl-form-group {
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.epl-form-label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.epl-form-label::after {
+    content: " *";
+    color: #ff6b6b;
+    opacity: 0.7;
+}
+
+.epl-form-label:not(.required)::after {
+    content: "";
+}
+
+.epl-form-input, .epl-form-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    background: #1a1a1a;
+    border: 2px solid #333;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.2s;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+}
+
+.epl-form-input:focus, .epl-form-textarea:focus {
+    outline: none;
+    border-color: #7B2FFF;
+    box-shadow: 0 0 0 3px rgba(123, 47, 255, 0.2);
+    background: #222;
+}
+
+.epl-form-input::placeholder, .epl-form-textarea::placeholder {
+    color: #666;
+}
+
+.epl-form-input.error, .epl-form-textarea.error {
+    border-color: #ff6b6b;
+    background: rgba(255, 107, 107, 0.05);
+    animation: epl-shake 0.3s ease-in-out;
+}
+
+@keyframes epl-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.epl-form-textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.5;
+}
+
+.epl-form-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    color: #ff6b6b;
+    font-size: 0.9rem;
+    background: rgba(255, 107, 107, 0.1);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border-left: 3px solid #ff6b6b;
+}
+
+.epl-char-count {
+    text-align: right;
+    margin-top: 6px;
+    color: #777;
+    font-size: 0.85rem;
+    font-family: monospace;
+}
+
+.epl-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+.epl-btn-primary, .epl-btn-secondary {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 120px;
+}
+
+.epl-btn-primary {
+    background: linear-gradient(135deg, #7B2FFF 0%, #9B4CFF 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(123, 47, 255, 0.3);
+    font-weight: 600;
+}
+
+.epl-btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(123, 47, 255, 0.4);
+    background: linear-gradient(135deg, #8b3dff 0%, #a55cff 100%);
+}
+
+.epl-btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+    background: linear-gradient(135deg, #5a1db3 0%, #7b3acc 100%);
+}
+
+.epl-btn-secondary {
+    background: #2a2a2a;
+    color: #ccc;
+    border: 1px solid #444;
+}
+
+.epl-btn-secondary:hover:not(:disabled) {
+    background: #333;
+    color: #fff;
+    border-color: #555;
+    transform: translateY(-2px);
+}
+
+.epl-spinner-small {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: epl-spin 0.8s linear infinite;
+}
+
+@keyframes epl-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Scrollbar personalizado */
+.epl-modal::-webkit-scrollbar {
+    width: 8px;
+}
+
+.epl-modal::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+}
+
+.epl-modal::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+.epl-modal::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .epl-modal-overlay {
+        padding: 10px;
+        align-items: flex-start;
+        padding-top: 20px;
+    }
+    
+    .epl-modal {
+        max-height: 90vh;
+        margin: 0;
+        max-width: 95vw;
+    }
+    
+    .epl-modal-header {
+        padding: 20px;
+    }
+    
+    .epl-modal-header h2 {
+        font-size: 1.3rem;
+    }
+    
+    .epl-modal-form {
+        padding: 20px;
+    }
+    
+    .epl-current-info {
+        margin: 0 20px 20px;
+        padding: 16px;
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+    
+    .epl-playlist-info {
+        text-align: center;
+    }
+    
+    .epl-modal-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .epl-btn-primary, .epl-btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Campo con error enfocado */
+.epl-form-input.error:focus, .epl-form-textarea.error:focus {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.25);
+}
+
+/* Transición suave para cambios */
+.epl-form-input, .epl-form-textarea, .epl-btn-primary, .epl-btn-secondary {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}

@@ -159,12 +159,16 @@ const PlaylistsPage = () => {
                 </div>
             )}
 
+          
             {showCreateModal && (
-                <CreatePlaylistModal 
-                    onClose={() => setShowCreateModal(false)}
-                    onSuccess={handlePlaylistCreated}
-                />
-            )}
+    <CreatePlaylistModal 
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={() => {
+            loadPlaylists(); // Recargar playlists
+            setShowCreateModal(false);
+        }}
+    />
+)}
 
         </div>
     );

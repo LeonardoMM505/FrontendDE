@@ -35,8 +35,8 @@ function App() {
     style={{
         width: "100%",
         position: "relative",
-        top: "11110",
-        left: "11110",
+        top: "0",
+        left: "0",
         background: "linear-gradient(90deg, #7B2FFF, #9B4CFF)",
         padding: "15px 30px",
         display: "flex",
