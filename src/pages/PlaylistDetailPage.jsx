@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getPlaylistByIdRequest, getPlaylistSongsRequest, deletePlaylistRequest } from '../api/playlist';
 import { useAuth } from '../context/auth.js';
-import SongCard from '../components/music/SongCard';
+import SongCard from '../components/music/songCard';
 import { getUsersRequest } from '../api/auth.js';
 import EditPlaylistModal from '../components/playlist/editPlaylistModal.jsx';
 import RemoveFromPlaylistButton from '../components/music/removeFromPlaylistButton.jsx';
